@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>CAPA Management System</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -41,6 +41,8 @@
             --chart-grid: #e2e8f0;
             --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1);
             --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --header-height: 70px;
+            --sidebar-width: 280px;
         }
 
         [data-theme="dark"] {
@@ -67,6 +69,7 @@
             color: var(--text-primary);
             transition: background-color 0.3s, color 0.3s;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         /* Login Page Styles */
@@ -76,6 +79,7 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
         }
 
         .login-card {
@@ -84,8 +88,20 @@
             box-shadow: var(--shadow-lg);
             width: 100%;
             max-width: 420px;
-            padding: 2.5rem;
+            padding: 2rem;
             border: 1px solid var(--border-color);
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .login-header {
@@ -119,7 +135,7 @@
             font-size: 0.9rem;
         }
 
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 0.75rem 1rem;
             background: var(--bg-primary);
@@ -130,7 +146,7 @@
             transition: all 0.3s;
         }
 
-        .form-group input:focus, .form-group select:focus {
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: none;
             border-color: var(--accent-color);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -146,12 +162,13 @@
             font-weight: 600;
             font-size: 1rem;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
             margin-top: 0.5rem;
         }
 
         .login-btn:hover {
             background: var(--accent-hover);
+            transform: translateY(-2px);
         }
 
         /* Main App Styles */
@@ -166,7 +183,7 @@
 
         /* Sidebar */
         .sidebar {
-            width: 280px;
+            width: var(--sidebar-width);
             background: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
             padding: 1.5rem;
@@ -174,6 +191,7 @@
             height: 100vh;
             overflow-y: auto;
             transition: all 0.3s;
+            z-index: 100;
         }
 
         .sidebar-header {
@@ -239,11 +257,38 @@
             color: white;
         }
 
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--accent-color);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            z-index: 99;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .mobile-menu-toggle:hover {
+            transform: scale(1.1);
+            background: var(--accent-hover);
+        }
+
         /* Main Content */
         .main-content {
             flex: 1;
-            margin-left: 280px;
+            margin-left: var(--sidebar-width);
             padding: 1.5rem;
+            transition: all 0.3s;
         }
 
         /* Top Navigation */
@@ -256,6 +301,8 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .page-title {
@@ -268,6 +315,30 @@
             display: flex;
             align-items: center;
             gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* DateTime Display */
+        .datetime-display {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 0.5rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        .date-part, .time-part {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .date-part i, .time-part i {
+            color: var(--accent-color);
+            font-size: 1rem;
         }
 
         .theme-toggle, .profile-btn {
@@ -278,6 +349,10 @@
             cursor: pointer;
             color: var(--text-primary);
             transition: all 0.3s;
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .theme-toggle:hover, .profile-btn:hover {
@@ -354,12 +429,14 @@
             border-radius: 10px;
             color: var(--text-primary);
             font-size: 0.9rem;
+            width: 100%;
         }
 
         .filter-actions {
             display: flex;
             gap: 0.5rem;
             align-items: flex-end;
+            flex-wrap: wrap;
         }
 
         .filter-actions button {
@@ -374,11 +451,13 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            transition: background 0.3s;
+            transition: all 0.3s;
+            white-space: nowrap;
         }
 
         .filter-actions button:hover {
             background: var(--accent-hover);
+            transform: translateY(-2px);
         }
 
         .filter-actions .reset-btn {
@@ -394,7 +473,7 @@
         /* Cards */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
@@ -404,7 +483,7 @@
             border: 1px solid var(--border-color);
             border-radius: 20px;
             padding: 1.5rem;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: all 0.3s;
         }
 
         .stat-card:hover {
@@ -471,6 +550,8 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
 
         .chart-header h3 {
@@ -497,6 +578,8 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .table-header h3 {
@@ -507,6 +590,7 @@
         .export-buttons {
             display: flex;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .export-btn {
@@ -531,6 +615,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 800px;
         }
 
         th {
@@ -563,6 +648,7 @@
             font-size: 0.85rem;
             font-weight: 500;
             display: inline-block;
+            white-space: nowrap;
         }
 
         .status-pending {
@@ -611,19 +697,6 @@
             text-overflow: ellipsis;
         }
 
-        /* Hover tooltip for truncated text */
-        .text-truncate:hover {
-            white-space: normal;
-            overflow: visible;
-            position: relative;
-            background: var(--bg-secondary);
-            z-index: 20;
-            padding: 0.5rem;
-            border-radius: 8px;
-            box-shadow: var(--shadow-lg);
-            max-width: 300px;
-        }
-
         /* Form Styles */
         .form-container {
             background: var(--bg-secondary);
@@ -643,6 +716,7 @@
             display: flex;
             gap: 1rem;
             margin-top: 1.5rem;
+            flex-wrap: wrap;
         }
 
         .btn-primary {
@@ -653,11 +727,12 @@
             border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
 
         .btn-primary:hover {
             background: var(--accent-hover);
+            transform: translateY(-2px);
         }
 
         .btn-secondary {
@@ -687,6 +762,7 @@
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            padding: 1rem;
         }
 
         .modal.active {
@@ -698,7 +774,7 @@
             border-radius: 20px;
             padding: 2rem;
             max-width: 500px;
-            width: 90%;
+            width: 100%;
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -721,28 +797,66 @@
             color: var(--text-secondary);
             font-size: 1.5rem;
             cursor: pointer;
+            padding: 0.5rem;
         }
 
-        /* Responsive */
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 1001;
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
         @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 0px;
+            }
+            
             .sidebar {
                 transform: translateX(-100%);
-                z-index: 1000;
+                width: 280px;
             }
             
             .sidebar.active {
                 transform: translateX(0);
+                box-shadow: var(--shadow-lg);
             }
             
             .main-content {
                 margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .mobile-menu-toggle {
+                display: flex;
             }
             
             .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .charts-container {
                 grid-template-columns: 1fr;
             }
             
@@ -750,14 +864,150 @@
                 grid-template-columns: 1fr;
             }
             
-            th, td {
-                padding: 0.75rem;
-                font-size: 0.85rem;
+            .filter-actions {
+                justify-content: stretch;
+            }
+            
+            .filter-actions button {
+                flex: 1;
+                justify-content: center;
+            }
+            
+            .top-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .nav-right {
+                justify-content: space-between;
+            }
+            
+            .datetime-display {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .table-container {
+                padding: 1rem;
+                margin: 0 -0.5rem;
+                border-radius: 12px;
+            }
+            
+            .export-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .export-btn {
+                flex: 1;
+                justify-content: center;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .form-actions button {
+                width: 100%;
+            }
+            
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .stat-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            
+            .page-title {
+                font-size: 1.2rem;
+            }
+            
+            .user-info span {
+                display: none;
+            }
+            
+            .user-info i {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .datetime-display {
+                font-size: 0.8rem;
+                padding: 0.4rem 0.8rem;
+            }
+            
+            .chart-card {
+                padding: 1rem;
+            }
+            
+            .chart-wrapper {
+                height: 200px;
+            }
+            
+            .action-cell {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                width: 100%;
+                margin: 0.1rem 0;
+            }
+        }
+
+        /* Landscape mode untuk HP */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .sidebar {
+                padding: 1rem;
+            }
+            
+            .nav-link {
+                padding: 0.5rem 0.75rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .sidebar, .top-nav, .filter-section, .export-buttons, .action-btn {
+                display: none !important;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 0;
+            }
+            
+            .table-container {
+                box-shadow: none;
+                border: 1px solid #000;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner"></div>
+
     <!-- Login Page -->
     <div id="loginPage" class="login-container">
         <div class="login-card">
@@ -789,7 +1039,7 @@
     <!-- Main App -->
     <div id="app" class="app-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <i class="fas fa-clipboard-check"></i>
                 <div>
@@ -825,12 +1075,29 @@
             </ul>
         </aside>
 
+        <!-- Mobile Menu Toggle -->
+        <button class="mobile-menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
         <!-- Main Content -->
         <main class="main-content">
             <!-- Top Navigation -->
             <nav class="top-nav">
                 <h1 class="page-title" id="pageTitle">Dashboard</h1>
                 <div class="nav-right">
+                    <!-- DateTime Display -->
+                    <div class="datetime-display" id="datetime">
+                        <div class="date-part">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span id="currentDate">--/--/----</span>
+                        </div>
+                        <div class="time-part">
+                            <i class="fas fa-clock"></i>
+                            <span id="currentTime">--:--:--</span>
+                        </div>
+                    </div>
+                    
                     <button class="theme-toggle" onclick="toggleTheme()">
                         <i class="fas fa-moon"></i>
                     </button>
@@ -894,7 +1161,7 @@
                         </div>
                         <div class="filter-actions">
                             <button onclick="applyFilters()">
-                                <i class="fas fa-search"></i> Terapkan Filter
+                                <i class="fas fa-search"></i> Terapkan
                             </button>
                             <button class="reset-btn" onclick="resetFilters()">
                                 <i class="fas fa-undo"></i> Reset
@@ -989,7 +1256,7 @@
                     </div>
                 </div>
 
-                <!-- Tabel Data CAPA Terkini dengan Corrective & Preventive -->
+                <!-- Tabel Data CAPA Terkini -->
                 <div class="table-container">
                     <div class="table-header">
                         <h3>Data CAPA Terkini</h3>
@@ -1002,24 +1269,26 @@
                             </button>
                         </div>
                     </div>
-                    <table id="capaTable">
-                        <thead>
-                            <tr>
-                                <th>Line</th>
-                                <th>Mesin</th>
-                                <th>Problem</th>
-                                <th>Corrective Action</th>
-                                <th>Preventive Action</th>
-                                <th>Due Date</th>
-                                <th>Status</th>
-                                <th>Progress</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Data akan diisi oleh JavaScript -->
-                        </tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table id="capaTable">
+                            <thead>
+                                <tr>
+                                    <th>Line</th>
+                                    <th>Mesin</th>
+                                    <th>Problem</th>
+                                    <th>Corrective Action</th>
+                                    <th>Preventive Action</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th>Progress</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Data akan diisi oleh JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -1087,23 +1356,25 @@
                     <div class="table-header">
                         <h3>Update Progress CAPA</h3>
                     </div>
-                    <table id="progressTable">
-                        <thead>
-                            <tr>
-                                <th>Line</th>
-                                <th>Mesin</th>
-                                <th>Problem</th>
-                                <th>Corrective Action</th>
-                                <th>Due Date</th>
-                                <th>Progress</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="progressTableBody">
-                            <!-- Data akan diisi JavaScript -->
-                        </tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table id="progressTable">
+                            <thead>
+                                <tr>
+                                    <th>Line</th>
+                                    <th>Mesin</th>
+                                    <th>Problem</th>
+                                    <th>Corrective Action</th>
+                                    <th>Due Date</th>
+                                    <th>Progress</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="progressTableBody">
+                                <!-- Data akan diisi JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -1116,19 +1387,21 @@
                             <i class="fas fa-plus"></i> Tambah User
                         </button>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersTableBody">
-                            <!-- Data akan diisi JavaScript -->
-                        </tbody>
-                    </table>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <!-- Data akan diisi JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </main>
@@ -1335,37 +1608,106 @@
         loadUsers();
         loadCapaData();
 
+        // Show loading spinner
+        function showLoading() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+        }
+
+        // Hide loading spinner
+        function hideLoading() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+        // Update datetime every second
+        function updateDateTime() {
+            const now = new Date();
+            
+            // Format tanggal: DD/MM/YYYY
+            const dateStr = now.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            }).replace(/\//g, '/');
+            
+            // Format waktu: HH:MM:SS
+            const timeStr = now.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            
+            document.getElementById('currentDate').textContent = dateStr;
+            document.getElementById('currentTime').textContent = timeStr;
+        }
+
+        // Run updateDateTime every second
+        setInterval(updateDateTime, 1000);
+
         // Login Handler
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            showLoading();
+            
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const role = document.getElementById('role').value;
 
             const user = users.find(u => u.username === username && u.password === password && u.role === role && u.status === 'active');
             
-            if (user) {
-                currentUser = user;
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('app').classList.add('active');
-                document.getElementById('currentUser').textContent = user.username + ' (' + user.role + ')';
+            setTimeout(() => {
+                hideLoading();
                 
-                // Tampilkan menu admin jika role admin
-                if (user.role === 'admin') {
-                    document.getElementById('adminMenu').style.display = 'block';
+                if (user) {
+                    currentUser = user;
+                    document.getElementById('loginPage').style.display = 'none';
+                    document.getElementById('app').classList.add('active');
+                    document.getElementById('currentUser').textContent = user.username + ' (' + (user.role === 'admin' ? 'Admin' : 'User') + ')';
+                    
+                    // Tampilkan menu admin jika role admin
+                    if (user.role === 'admin') {
+                        document.getElementById('adminMenu').style.display = 'block';
+                    } else {
+                        document.getElementById('adminMenu').style.display = 'none';
+                    }
+                    
+                    // Update machine dropdown
+                    updateMachineFilter();
+                    
+                    // Apply filters and update display
+                    applyFilters();
+                    renderTables();
+                    renderUsersTable();
+                    
+                    // Update datetime immediately
+                    updateDateTime();
                 } else {
-                    document.getElementById('adminMenu').style.display = 'none';
+                    alert('Username atau password salah!');
                 }
-                
-                // Update machine dropdown
-                updateMachineFilter();
-                
-                // Apply filters and update display
-                applyFilters();
-                renderTables();
-                renderUsersTable();
+            }, 500); // Simulasi loading
+        });
+
+        // Mobile menu toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+            const icon = this.querySelector('i');
+            if (document.getElementById('sidebar').classList.contains('active')) {
+                icon.className = 'fas fa-times';
             } else {
-                alert('Username atau password salah!');
+                icon.className = 'fas fa-bars';
+            }
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menuToggle');
+            
+            if (window.innerWidth <= 768) {
+                if (!sidebar.contains(event.target) && !menuToggle.contains(event.target) && sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    menuToggle.querySelector('i').className = 'fas fa-bars';
+                }
             }
         });
 
@@ -1490,12 +1832,19 @@
                 } else if (page === 'users') {
                     renderUsersTable();
                 }
+                
+                // Close sidebar on mobile after navigation
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').classList.remove('active');
+                    document.getElementById('menuToggle').querySelector('i').className = 'fas fa-bars';
+                }
             });
         });
 
         // Form Input CAPA
         document.getElementById('capaForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            showLoading();
             
             const newCapa = {
                 id: capaData.length > 0 ? Math.max(...capaData.map(d => d.id)) + 1 : 1,
@@ -1511,14 +1860,17 @@
                 status: 'pending'
             };
             
-            capaData.push(newCapa);
-            saveCapaData();
-            updateMachineFilter();
-            resetForm();
-            alert('Data berhasil disimpan!');
-            
-            // Pindah ke halaman dashboard
-            document.querySelector('[data-page="dashboard"]').click();
+            setTimeout(() => {
+                capaData.push(newCapa);
+                saveCapaData();
+                updateMachineFilter();
+                resetForm();
+                hideLoading();
+                alert('Data berhasil disimpan!');
+                
+                // Pindah ke halaman dashboard
+                document.querySelector('[data-page="dashboard"]').click();
+            }, 500);
         });
 
         // Reset Form
@@ -1554,21 +1906,9 @@
                     <tr>
                         <td>${item.line}</td>
                         <td>${item.machine}</td>
-                        <td>
-                            <div class="text-truncate" title="${item.problem}">
-                                ${item.problem}
-                            </div>
-                        </td>
-                        <td>
-                            <div class="text-truncate" title="${item.corrective}">
-                                ${item.corrective}
-                            </div>
-                        </td>
-                        <td>
-                            <div class="text-truncate" title="${item.preventive}">
-                                ${item.preventive}
-                            </div>
-                        </td>
+                        <td>${item.problem}</td>
+                        <td>${item.corrective}</td>
+                        <td>${item.preventive}</td>
                         <td>${item.dueDate}</td>
                         <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                         <td>${item.progress}%</td>
@@ -1587,16 +1927,8 @@
                     <tr>
                         <td>${item.line}</td>
                         <td>${item.machine}</td>
-                        <td>
-                            <div class="text-truncate" title="${item.problem}">
-                                ${item.problem}
-                            </div>
-                        </td>
-                        <td>
-                            <div class="text-truncate" title="${item.corrective}">
-                                ${item.corrective}
-                            </div>
-                        </td>
+                        <td>${item.problem}</td>
+                        <td>${item.corrective}</td>
                         <td>${item.dueDate}</td>
                         <td>
                             <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -1678,36 +2010,40 @@
 
         document.getElementById('userForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            showLoading();
             
             const username = document.getElementById('userUsername').value;
             const password = document.getElementById('userPassword').value;
             const role = document.getElementById('userRole').value;
             const userId = document.getElementById('userId').value;
             
-            if (editingUserId) {
-                // Edit existing user
-                const user = users.find(u => u.id === editingUserId);
-                if (user) {
-                    user.username = username;
-                    if (password) user.password = password;
-                    user.role = role;
+            setTimeout(() => {
+                if (editingUserId) {
+                    // Edit existing user
+                    const user = users.find(u => u.id === editingUserId);
+                    if (user) {
+                        user.username = username;
+                        if (password) user.password = password;
+                        user.role = role;
+                    }
+                } else {
+                    // Add new user
+                    const newUser = {
+                        id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
+                        username: username,
+                        password: password,
+                        role: role,
+                        status: 'active'
+                    };
+                    users.push(newUser);
                 }
-            } else {
-                // Add new user
-                const newUser = {
-                    id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-                    username: username,
-                    password: password,
-                    role: role,
-                    status: 'active'
-                };
-                users.push(newUser);
-            }
-            
-            saveUsers();
-            renderUsersTable();
-            closeUserModal();
-            alert(editingUserId ? 'User berhasil diupdate!' : 'User berhasil ditambahkan!');
+                
+                saveUsers();
+                renderUsersTable();
+                closeUserModal();
+                hideLoading();
+                alert(editingUserId ? 'User berhasil diupdate!' : 'User berhasil ditambahkan!');
+            }, 500);
         });
 
         function editUser(id) {
@@ -1721,9 +2057,13 @@
             }
             
             if (confirm('Yakin ingin menghapus user ini?')) {
-                users = users.filter(u => u.id !== id);
-                saveUsers();
-                renderUsersTable();
+                showLoading();
+                setTimeout(() => {
+                    users = users.filter(u => u.id !== id);
+                    saveUsers();
+                    renderUsersTable();
+                    hideLoading();
+                }, 500);
             }
         }
 
@@ -1914,62 +2254,73 @@
 
         // Export functions
         function exportToPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF({
-                orientation: 'landscape'
-            });
+            showLoading();
             
-            doc.text('Data CAPA', 14, 16);
-            
-            const filteredData = getFilteredData();
-            const tableData = filteredData.map(item => [
-                item.line,
-                item.machine,
-                item.problem,
-                item.corrective,
-                item.preventive,
-                item.dueDate,
-                item.status,
-                item.progress + '%'
-            ]);
-            
-            doc.autoTable({
-                head: [['Line', 'Mesin', 'Problem', 'Corrective Action', 'Preventive Action', 'Due Date', 'Status', 'Progress']],
-                body: tableData,
-                startY: 20,
-                theme: 'grid',
-                styles: { fontSize: 8 },
-                columnStyles: {
-                    2: { cellWidth: 40 },
-                    3: { cellWidth: 40 },
-                    4: { cellWidth: 40 }
-                }
-            });
-            
-            doc.save('capa-data.pdf');
+            setTimeout(() => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({
+                    orientation: 'landscape'
+                });
+                
+                doc.text('Data CAPA', 14, 16);
+                
+                const filteredData = getFilteredData();
+                const tableData = filteredData.map(item => [
+                    item.line,
+                    item.machine,
+                    item.problem,
+                    item.corrective,
+                    item.preventive,
+                    item.dueDate,
+                    item.status,
+                    item.progress + '%'
+                ]);
+                
+                doc.autoTable({
+                    head: [['Line', 'Mesin', 'Problem', 'Corrective Action', 'Preventive Action', 'Due Date', 'Status', 'Progress']],
+                    body: tableData,
+                    startY: 20,
+                    theme: 'grid',
+                    styles: { fontSize: 8 },
+                    columnStyles: {
+                        2: { cellWidth: 40 },
+                        3: { cellWidth: 40 },
+                        4: { cellWidth: 40 }
+                    }
+                });
+                
+                doc.save('capa-data.pdf');
+                hideLoading();
+            }, 500);
         }
 
         function exportToCSV() {
-            const filteredData = getFilteredData();
+            showLoading();
             
-            // Prepare data for CSV dengan format yang lebih rapi
-            const csvData = filteredData.map(item => ({
-                'Line': item.line,
-                'Mesin': item.machine,
-                'Tanggal': item.date,
-                'Problem': item.problem,
-                'Root Cause': item.rootCause,
-                'Corrective Action': item.corrective,
-                'Preventive Action': item.preventive,
-                'Due Date': item.dueDate,
-                'Progress': item.progress + '%',
-                'Status': item.status
-            }));
-            
-            const ws = XLSX.utils.json_to_sheet(csvData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'CAPA');
-            XLSX.writeFile(wb, 'capa-data.csv');
+            setTimeout(() => {
+                const filteredData = getFilteredData();
+                
+                // Prepare data for CSV
+                const csvData = filteredData.map(item => ({
+                    'Line': item.line,
+                    'Mesin': item.machine,
+                    'Tanggal': item.date,
+                    'Problem': item.problem,
+                    'Root Cause': item.rootCause,
+                    'Corrective Action': item.corrective,
+                    'Preventive Action': item.preventive,
+                    'Due Date': item.dueDate,
+                    'Progress': item.progress + '%',
+                    'Status': item.status
+                }));
+                
+                const ws = XLSX.utils.json_to_sheet(csvData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'CAPA');
+                XLSX.writeFile(wb, 'capa-data.csv');
+                
+                hideLoading();
+            }, 500);
         }
 
         function exportChartPDF() {
@@ -1997,23 +2348,27 @@
         // Update form submit
         document.getElementById('updateForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            showLoading();
             
             const id = parseInt(document.getElementById('updateId').value);
             const progress = parseInt(document.getElementById('updateProgress').value);
             const newDueDate = document.getElementById('updateDueDate').value;
             const newStatus = document.getElementById('updateStatus').value;
             
-            const item = capaData.find(i => i.id === id);
-            if (item) {
-                item.progress = progress;
-                if (newDueDate) item.dueDate = newDueDate;
-                item.status = newStatus;
-                
-                saveCapaData();
-                renderTables();
-                closeModal();
-                alert('Progress berhasil diupdate!');
-            }
+            setTimeout(() => {
+                const item = capaData.find(i => i.id === id);
+                if (item) {
+                    item.progress = progress;
+                    if (newDueDate) item.dueDate = newDueDate;
+                    item.status = newStatus;
+                    
+                    saveCapaData();
+                    renderTables();
+                    closeModal();
+                    hideLoading();
+                    alert('Progress berhasil diupdate!');
+                }
+            }, 500);
         });
 
         // CRUD operations
@@ -2035,11 +2390,16 @@
 
         function deleteData(id) {
             if (currentUser?.role === 'admin' && confirm('Yakin ingin menghapus data ini?')) {
-                capaData = capaData.filter(i => i.id !== id);
-                saveCapaData();
-                updateMachineFilter();
-                renderTables();
-                updateDashboard();
+                showLoading();
+                
+                setTimeout(() => {
+                    capaData = capaData.filter(i => i.id !== id);
+                    saveCapaData();
+                    updateMachineFilter();
+                    renderTables();
+                    updateDashboard();
+                    hideLoading();
+                }, 500);
             }
         }
 
@@ -2052,10 +2412,12 @@
 
         // Logout
         function logout() {
-            currentUser = null;
-            document.getElementById('loginPage').style.display = 'flex';
-            document.getElementById('app').classList.remove('active');
-            document.querySelector('[data-page="dashboard"]').click();
+            if (confirm('Yakin ingin logout?')) {
+                currentUser = null;
+                document.getElementById('loginPage').style.display = 'flex';
+                document.getElementById('app').classList.remove('active');
+                document.querySelector('[data-page="dashboard"]').click();
+            }
         }
 
         // Event listener untuk filter line
@@ -2069,6 +2431,17 @@
             
             // Set default theme
             document.documentElement.setAttribute('data-theme', 'light');
+            
+            // Initialize datetime
+            updateDateTime();
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('menuToggle').querySelector('i').className = 'fas fa-bars';
+            }
         });
 
         // Close modal when clicking outside
