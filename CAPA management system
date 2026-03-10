@@ -1,0 +1,21 @@
+capa-system/
+│
+├── index.html              (file utama aplikasi)
+├── style.css               (opsional, bisa pisah atau di dalam HTML)
+├── script.js               (opsional, bisa pisah atau di dalam HTML)
+│
+├── api/                    (folder untuk backend API)
+│   ├── config.php
+│   ├── get_capa.php
+│   ├── save_capa.php
+│   ├── update_capa.php
+│   └── delete_capa.php
+│
+├── database/               (folder untuk file SQL)
+│   └── capa_system.sql
+│
+├── assets/                 (folder untuk gambar, icon, dll)
+│   └── (kosong dulu)
+│
+├── README.md               (penjelasan project)
+└── .gitignore              (file yang diabaikan git)
